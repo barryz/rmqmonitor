@@ -1,0 +1,24 @@
+{
+  "debug": false,
+  "version": "0.0.1",
+  "hostname": "",
+  "interval": 10,
+  "batchsize": 100,
+  "rabbitmq": {
+    "host": "vm-test-barryz",
+    "port": 15672,
+    "user": "admin",
+    "password": "On1NgXOoy3lLMO"
+  },
+  "falcon": {
+    "api": "http://127.0.0.1:1988/v1/push"
+  },
+  "ignore_queue": [
+    "test",
+    "celery"
+  ],
+  "qrunning": [
+    "idle",
+    "running"
+  ]
+}
