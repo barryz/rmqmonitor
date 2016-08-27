@@ -2,8 +2,8 @@ package funcs
 
 import (
 	"encoding/json"
-	"fmt"
 	"rmqmon/g"
+	"log"
 )
 
 type Rate struct {
@@ -52,18 +52,20 @@ type OverView struct {
 	StatsDbEvents int `json:"statistics_db_event_queue"`
 }
 
-func GetOverview() (*OverView, error) {
+func GetOverview() *OverView {
 	var service string = "overview"
 	var result OverView
 	res, err := g.RabbitApi(service)
 	if err != nil {
-		return &result, err
+		log.Println(err)
+		return &result
 	}
 
 	err = json.Unmarshal(res, &result)
 	if err != nil {
-		return &result, fmt.Errorf("ERROR: unmarshal json data fail")
+		log.Println("ERROR: unmarshal json data fail")
+		return &result
 	}
 
-	return &result, nil
+	return &result
 }

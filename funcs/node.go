@@ -2,8 +2,8 @@ package funcs
 
 import (
 	"encoding/json"
-	"fmt"
 	"rmqmon/g"
+	"log"
 )
 
 type MemStats struct {
@@ -39,7 +39,7 @@ type NodeStats struct {
 	RunQueues    int64    `json:"run_queue"`
 }
 
-func GetNode() (*NodeStats, error) {
+func GetNode() *NodeStats {
 	host := g.GetHost()
 
 	service := "nodes/rabbit@" + host + "?memory=true"
@@ -47,13 +47,15 @@ func GetNode() (*NodeStats, error) {
 
 	res, err := g.RabbitApi(service)
 	if err != nil {
-		return &result, err
+		log.Println(err)
+		return &result
 	}
 
 	err = json.Unmarshal(res, &result)
 	if err != nil {
-		return &result, fmt.Errorf("ERROR: unmarshal json data fail")
+		log.Println("ERROR: unmarshal json data fail")
+		return &result
 	}
 
-	return &result, nil
+	return &result
 }

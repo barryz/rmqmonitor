@@ -2,29 +2,31 @@ package funcs
 
 import (
 	"encoding/json"
-	"fmt"
 	"rmqmon/g"
+	"log"
 )
 
 type AliveNess struct {
 	Status string `json:"status"`
 }
 
-func GetAlive() (*AliveNess, error) {
+func GetAlive() *AliveNess {
 	service := "aliveness-test/%2f"
 	var result AliveNess
 
 	res, err := g.RabbitApi(service)
 	if err != nil {
-		return &result, err
+		log.Println(err)
+		return &result
 	}
 
 	err = json.Unmarshal(res, &result)
 	if err != nil {
-		return &result, fmt.Errorf("ERROR: unmarshal json data fail")
+		log.Println("ERROR: unmarshal json data fail")
+		return &result
 	}
 
-	return &result, nil
+	return &result
 }
 
 func CheckAlive() bool {

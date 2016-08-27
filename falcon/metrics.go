@@ -25,11 +25,14 @@ type MetaData struct {
 	Step        int64       `json:"step"`
 }
 
+func hostname() string {
+	return g.GetHost()
+}
+
 func NewMetric(name string, value interface{}, tags string) *MetaData {
-	host := g.GetHost()
 	return &MetaData{
 		Metric:      name,
-		Endpoint:    host,
+		Endpoint:    hostname(),
 		CounterType: fmt.Sprintf("GAUGE"),
 		Tags:        tags,
 		Timestamp:   time.Now().Unix(),
@@ -93,20 +96,9 @@ func partitions(s []string) int64 {
 }
 
 func handleOverview(data []*MetaData) []*MetaData {
-	ov, err := funcs.GetOverview()
-	if err != nil {
-		log.Println(err)
-	}
-
-	nd, err := funcs.GetNode()
-	if err != nil {
-		log.Println(err)
-	}
-
-	al, err := funcs.GetAlive()
-	if err != nil {
-		log.Println(err)
-	}
+	ov := funcs.GetOverview()
+	nd := funcs.GetNode()
+	al := funcs.GetAlive()
 
 	data = append(data, NewMetric(OvPrefix + "queuesTotal", ov.Queues, "")) // 队列总数
 	data = append(data, NewMetric(OvPrefix + "channelsTotal", ov.Channels, ""))
@@ -138,10 +130,7 @@ func handleOverview(data []*MetaData) []*MetaData {
 }
 
 func handleQueues(data []*MetaData) []*MetaData {
-	qs, err := funcs.GetQueues()
-	if err != nil {
-		log.Println(err)
-	}
+	qs := funcs.GetQueues()
 
 	for _, q := range *qs {
 		tags := fmt.Sprintf("name=%s,vhost=%s", q.Name, q.Vhost)

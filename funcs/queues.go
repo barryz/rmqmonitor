@@ -2,9 +2,9 @@ package funcs
 
 import (
 	"encoding/json"
-	"fmt"
 	"rmqmon/g"
 	"strings"
+	"log"
 )
 
 type QueueRate struct {
@@ -63,7 +63,7 @@ func filterQueue(q *QueueMap) bool {
 	}
 }
 
-func GetQueues() (*[]QueueMap, error) {
+func GetQueues() *[]QueueMap {
 	var (
 		queues    []QueueMap
 		newqueues []QueueMap
@@ -72,10 +72,12 @@ func GetQueues() (*[]QueueMap, error) {
 	service := "queues"
 	res, err := g.RabbitApi(service)
 	if err != nil {
-		return &newqueues, err
+		log.Println(err)
+		return &newqueues
 	}
 	if err := json.Unmarshal(res, &queues); err != nil {
-		return &newqueues, fmt.Errorf("unmarshal queue file fail")
+		log.Println("ERROR: unmarshal queue file fail")
+		return &newqueues
 	}
 
 	for _, q := range queues {
@@ -84,5 +86,5 @@ func GetQueues() (*[]QueueMap, error) {
 		}
 	}
 
-	return &newqueues, nil
+	return &newqueues
 }

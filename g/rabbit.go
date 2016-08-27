@@ -1,12 +1,12 @@
 package g
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"fmt"
 )
 
 func GetHost() string {
@@ -46,11 +46,11 @@ func RabbitApi(service string) ([]byte, error) {
 	request.SetBasicAuth(user, password)
 	response, err := client.Do(request)
 	if err != nil {
-		return []byte(""), fmt.Errorf("ERROR: Call rabbitmq rest api fail")
+		return []byte(""), fmt.Errorf("ERROR: Call rabbit api fail")
 	}
+
 	defer response.Body.Close()
 
-	// handle response
 	result_code := response.StatusCode
 	switch result_code {
 	case 200:
