@@ -9,24 +9,22 @@ import (
 	"strconv"
 )
 
-func GetHost() (string, error) {
+func GetHost() string {
 	host := Config().Rabbit.Host
 	if host != "" {
-		return host, nil
+		return host
 	}
 
 	host, err := os.Hostname()
 	if err != nil {
 		log.Println("ERROR: os.Hostname() fail", err)
+		return "127.0.0.1"
 	}
-	return host, err
+	return host
 }
 
 func GetApiUrl(service string) string {
-	host, err := GetHost()
-	if err != nil {
-		host = "127.0.0.1"
-	}
+	host := GetHost()
 	port := Config().Rabbit.Port
 	api_url := "http://" + host + ":" + strconv.Itoa(port) + "/api/" + service
 	return api_url

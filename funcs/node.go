@@ -40,10 +40,7 @@ type NodeStats struct {
 }
 
 func GetNode() (*NodeStats, error) {
-	host, err := g.GetHost()
-	if err != nil {
-		host = "127.0.0.1"
-	}
+	host := g.GetHost()
 
 	service := "nodes/rabbit@" + host + "?memory=true"
 	var result NodeStats

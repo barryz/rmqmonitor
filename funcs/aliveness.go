@@ -26,3 +26,12 @@ func GetAlive() (*AliveNess, error) {
 
 	return &result, nil
 }
+
+func CheckAlive() bool {
+	service := "whoami"
+	if _, err := g.RabbitApi(service); err == nil {
+		return true
+	} else {
+		return false
+	}
+}
