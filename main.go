@@ -5,6 +5,8 @@ import (
 	"rmqmon/g"
 	"time"
 	"rmqmon/falcon"
+	"fmt"
+	"os"
 )
 
 func Collect() {
@@ -21,8 +23,14 @@ func collect(sec int64) {
 
 func main() {
 	cfg := flag.String("c", "cfg.json", "configuration file")
+	ver := flag.Bool("v", false, "show agent version")
 
 	flag.Parse()
+
+	if *ver {
+		fmt.Println(g.VERSION)
+		os.Exit(0)
+	}
 
 	g.ParseConfig(*cfg)
 
