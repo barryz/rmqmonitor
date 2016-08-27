@@ -20,6 +20,7 @@ type FalconConfig struct {
 
 type GlobalConfig struct {
 	Debug     bool          `json:"debug"`
+	Details   bool          `json:"details`
 	Hostname  string        `json:"hostname"`
 	Version   string        `json:"version"`
 	Batchsize int           `json:"batchsize"`
@@ -32,7 +33,7 @@ type GlobalConfig struct {
 
 var (
 	config *GlobalConfig
-	lock = new(sync.RWMutex)
+	lock   = new(sync.RWMutex)
 )
 
 func Config() *GlobalConfig {

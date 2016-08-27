@@ -41,6 +41,9 @@ type NodeStats struct {
 
 func GetNode() *NodeStats {
 	host := g.GetHost()
+	if g.Config().Debug {
+		log.Printf("INFO: Get hostname %s.", host)
+	}
 
 	service := "nodes/rabbit@" + host + "?memory=true"
 	var result NodeStats

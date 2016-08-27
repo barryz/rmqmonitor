@@ -25,14 +25,11 @@ type MetaData struct {
 	Step        int64       `json:"step"`
 }
 
-func hostname() string {
-	return g.GetHost()
-}
-
 func NewMetric(name string, value interface{}, tags string) *MetaData {
+	host := g.GetHost()
 	return &MetaData{
 		Metric:      name,
-		Endpoint:    hostname(),
+		Endpoint:    host,
 		CounterType: fmt.Sprintf("GAUGE"),
 		Tags:        tags,
 		Timestamp:   time.Now().Unix(),
@@ -164,7 +161,9 @@ func Collector() {
 		m = handleSickRabbit(m)
 	} else {
 		m = handleOverview(m)
-		m = handleQueues(m)
+		if g.Config().Details {
+			m = handleQueues(m)
+		}
 	}
 
 	log.Printf("Send to %s, size: %d.", g.Config().Falcon.Api, len(m))

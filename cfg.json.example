@@ -4,12 +4,12 @@
   "hostname": "",
   "interval": 10,
   "batchsize": 100,
-  "details": false,
+  "details": true,
   "rabbitmq": {
-    "host": "vm-test-barryz",
+    "host": "",
     "port": 15672,
     "user": "admin",
-    "password": "On1NgXOoy3lLMO"
+    "password": "admin"
   },
   "falcon": {
     "api": "http://127.0.0.1:1988/v1/push"

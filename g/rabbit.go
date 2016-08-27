@@ -20,10 +20,6 @@ func GetHost() string {
 		log.Println("ERROR: os.Hostname() fail", err)
 		return "127.0.0.1"
 	}
-
-	if Config().Debug {
-		log.Printf("DEBUG: Localhost name is %s", host)
-	}
 	return host
 }
 
