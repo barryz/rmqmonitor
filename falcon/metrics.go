@@ -95,9 +95,7 @@ func partitions(s []string) int64 {
 func handleOverview(data []*MetaData) []*MetaData {
 	ov := funcs.GetOverview()
 	nd := funcs.GetNode()
-	fmt.Println(nd.Partitions)
 	al := funcs.GetAlive()
-	fmt.Println(al.Status)
 
 	data = append(data, NewMetric(OvPrefix + "queuesTotal", ov.Queues, "")) // 队列总数
 	data = append(data, NewMetric(OvPrefix + "channelsTotal", ov.Channels, ""))
