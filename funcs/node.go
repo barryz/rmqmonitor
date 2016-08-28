@@ -56,7 +56,7 @@ func GetNode() *NodeStats {
 
 	err = json.Unmarshal(res, &result)
 	if err != nil {
-		log.Println("ERROR: unmarshal json data fail")
+		log.Println("ERROR: unmarshal json data fail, ", err)
 		return &result
 	}
 

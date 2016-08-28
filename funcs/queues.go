@@ -76,7 +76,7 @@ func GetQueues() *[]QueueMap {
 		return &newqueues
 	}
 	if err := json.Unmarshal(res, &queues); err != nil {
-		log.Println("ERROR: unmarshal queue file fail")
+		log.Println("ERROR: unmarshal queue file fail, ", err)
 		return &newqueues
 	}
 
