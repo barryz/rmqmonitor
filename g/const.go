@@ -1,5 +1,5 @@
 package g
 
 const (
-	VERSION = "0.0.2-beta01"
+	VERSION = "0.0.2-gray"
 )

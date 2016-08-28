@@ -2,8 +2,8 @@ package funcs
 
 import (
 	"encoding/json"
-	"rmqmon/g"
 	"log"
+	"rmqmon/g"
 )
 
 type MemStats struct {
@@ -25,9 +25,9 @@ type MemStats struct {
 type NodeStats struct {
 	MemStats     `json:"memory"`
 	Partitions   []string `json:"partitions"`
-	Rawait       int64    `json:"io_read_avg_time"`
-	Wawait       int64    `json:"io_write_avg_time"`
-	Syncawait    int64    `json:"io_sync_avg_time"`
+	Rawait       float64  `json:"io_read_avg_time"`
+	Wawait       float64  `json:"io_write_avg_time"`
+	Syncawait    float64  `json:"io_sync_avg_time"`
 	MemUsed      int64    `json:"mem_used"`
 	MemLimit     int64    `json:"mem_limit"`
 	SocketsUsed  int64    `json:"sockets_used"`

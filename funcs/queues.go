@@ -23,7 +23,7 @@ type QueueMap struct {
 	Messages        int64   `json:"messages"`
 	MessagesReady   int64   `json:"messages_ready"`
 	MessagesUnacked int64   `json:"messages_unacknowledged"`
-	ConsumerUtil    float64 `json:"consumer_utilisation"`
+	ConsumerUtil    interface{} `json:"consumer_utilisation"`
 	Consumers       int64   `json:"consumers"`
 	Status          string  `json:"state"`
 	Name            string  `json:"name"`
@@ -35,8 +35,8 @@ type QueueMap struct {
 func filterQueue(q *QueueMap) bool {
 	var (
 		isignore bool = false
-		isad     bool = false
-		isvhost  bool = false
+		isad bool = false
+		isvhost bool = false
 	)
 	ignores := g.Config().Ignores
 

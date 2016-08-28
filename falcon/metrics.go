@@ -48,15 +48,19 @@ func (m *MetaData) SetValue(v interface{}) {
 	m.Value = v
 }
 
+func trimfloat(s float64) float64 {
+	if s, err := strconv.ParseFloat(fmt.Sprintf("%.3f", s), 64); err == nil {
+		return s
+	}
+	return s
+}
+
 func calcpct(l, t int64) (pct float64) {
-	var err error
 	if t == 0 {
 		return
 	}
 	pct = float64(l) / float64(t) * 100.00
-	if pct, err = strconv.ParseFloat(fmt.Sprintf("%.3f", pct), 64); err == nil {
-		return
-	}
+	pct = trimfloat(pct)
 	return
 }
 
@@ -92,6 +96,17 @@ func partitions(s []string) int64 {
 	}
 }
 
+func consumerutil(c interface{}) float64 {
+	if vv, ok := c.(float64); ok {
+		return trimfloat(vv * 100.00)
+	} else if _, ok := c.(bool); ok {
+		return 0.0
+	} else if _, ok := c.(string); ok {
+		return 0.0
+	}
+	return 0.0
+}
+
 func handleOverview(data []*MetaData) []*MetaData {
 	ov := funcs.GetOverview()
 	nd := funcs.GetNode()
@@ -117,7 +132,7 @@ func handleOverview(data []*MetaData) []*MetaData {
 	data = append(data, NewMetric(OvPrefix + "memUsedPct", calcpct(nd.MemUsed, nd.MemLimit), ""))
 	data = append(data, NewMetric(OvPrefix + "socketUsedPct", calcpct(nd.SocketsUsed, nd.SocketsTotal), ""))
 	data = append(data, NewMetric(OvPrefix + "erlProcsUsedPct", calcpct(nd.ErlProcUsed, nd.ErlProcTotal), "")) //消费生产比
-	data = append(data, NewMetric(OvPrefix + "dpRatio", calcpct(int64(ov.Deliver_Rates.Rate), int64(ov.Publish_Rates.Rate)), ""))
+	data = append(data, NewMetric(OvPrefix + "dpRatio", calcpct(int64(ov.Deliver_get_Rates.Rate), int64(ov.Publish_Rates.Rate)), ""))
 	data = append(data, NewMetric(OvPrefix + "runQueue", nd.RunQueues, ""))
 	data = append(data, NewMetric(OvPrefix + "isAlive", aliveness(al.Status), ""))          //读写判断
 	data = append(data, NewMetric(OvPrefix + "isPartition", partitions(nd.Partitions), "")) //是否发生网络分区
@@ -140,7 +155,7 @@ func handleQueues(data []*MetaData) []*MetaData {
 		data = append(data, NewMetric(QuPrefix + "ack", q.Ack.Rate, tags))
 		data = append(data, NewMetric(QuPrefix + "memory", q.Memory, tags))
 		data = append(data, NewMetric(QuPrefix + "consumers", q.Consumers, tags))
-		data = append(data, NewMetric(QuPrefix + "consumer_utilisation", q.ConsumerUtil * 100.00, tags))
+		data = append(data, NewMetric(QuPrefix + "consumer_utilisation", consumerutil(q.ConsumerUtil), tags))
 		data = append(data, NewMetric(QuPrefix + "status", qstats(q.Status), tags))
 		data = append(data, NewMetric(QuPrefix + "dpratio", calcpct(int64(q.Deliver_get.Rate), int64(q.Publish.Rate)), tags))
 	}
