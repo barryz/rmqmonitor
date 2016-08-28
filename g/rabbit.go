@@ -7,6 +7,8 @@ import (
 	"os"
 	"strconv"
 	"fmt"
+	"net"
+	"time"
 )
 
 func GetHost() string {
@@ -35,8 +37,22 @@ func RabbitApi(service string) ([]byte, error) {
 	user := Config().Rabbit.User
 	password := Config().Rabbit.Password
 
-	// set request
-	client := &http.Client{}
+	// set connect/get/resp timeout
+	client := &http.Client{
+		Transport: &http.Transport{
+			Dial: func(netw, addr string) (net.Conn, error) {
+				c, err := net.DialTimeout(netw, addr, time.Second * 3)
+				if err != nil {
+					log.Println("ERROR: dail timeout", err)
+					return nil, err
+				}
+				return c, nil
+
+			},
+			MaxIdleConnsPerHost:   10,
+			ResponseHeaderTimeout: time.Second * 2,
+		},
+	}
 	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Set("Accept", "application/json")
 	request.SetBasicAuth(user, password)
