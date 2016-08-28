@@ -128,6 +128,16 @@ func handleOverview(data []*MetaData) []*MetaData {
 	data = append(data, NewMetric(OvPrefix + "publishRate", ov.Publish_Rates.Rate, ""))
 	data = append(data, NewMetric(OvPrefix + "redeliverRate", ov.Redeliver_Rates.Rate, ""))
 	data = append(data, NewMetric(OvPrefix + "ackRate", ov.Ack_Rates.Rate, ""))
+	data = append(data, NewMetric(OvPrefix + "ioReadawit", nd.Rawait, "")) // io_read_avg_wait_time
+	data = append(data, NewMetric(OvPrefix + "ioWriteawit", nd.Wawait, "")) // io_write_avg_wait_time
+	data = append(data, NewMetric(OvPrefix + "ioSyncawit", nd.Syncawait, "")) // io_sync_avg_wait_time
+	data = append(data, NewMetric(OvPrefix + "memConnreader", nd.Connection_readers, ""))
+	data = append(data, NewMetric(OvPrefix + "memConnwriter", nd.Connection_writers, ""))
+	data = append(data, NewMetric(OvPrefix + "memConnchannels", nd.Connection_channels, ""))
+	data = append(data, NewMetric(OvPrefix + "memMnesia", nd.Mnesia, ""))
+	data = append(data, NewMetric(OvPrefix + "memMgmtdb", nd.Mgmt_db, ""))
+	data = append(data, NewMetric(OvPrefix + "memPlugins", nd.Plugins, ""))
+	data = append(data, NewMetric(OvPrefix + "memMsgidx", nd.Msg_index, ""))
 	data = append(data, NewMetric(OvPrefix + "fdUsedPct", calcpct(nd.FdUsed, nd.FdTotal), ""))
 	data = append(data, NewMetric(OvPrefix + "memUsedPct", calcpct(nd.MemUsed, nd.MemLimit), ""))
 	data = append(data, NewMetric(OvPrefix + "socketUsedPct", calcpct(nd.SocketsUsed, nd.SocketsTotal), ""))
