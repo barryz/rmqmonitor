@@ -34,7 +34,7 @@ RabbitMQ 状态数据采集脚本
 |rabbitmq.overview.consumersTotal| |GAUGE|Counsumer总数|
 |rabbitmq.overview.queuesTotal| |GAUGE|队列总数|
 |rabbitmq.overview.exchangesTotal| |GAUGE|exchange 总数|
-|rabbitmq.overview.isAlive| |GAUGE|MQ健康状态|
+|rabbitmq.overview.isAlive| |GAUGE|MQ健康状态(通过生产/消费判断集群读写)|
 |rabbitmq.overview.isPartition| |GAUGE|MQ集群网络分区状态|
 |rabbitmq.overview.memUsedPct| |GAUGE|内存使用占比|
 |rabbitmq.overview.fdUsedPct| |GAUGE|file desc使用占比|
