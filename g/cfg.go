@@ -5,6 +5,7 @@ import (
 	"github.com/toolkits/file"
 	"log"
 	"sync"
+	"os"
 )
 
 type RabbitConfig struct {
@@ -57,6 +58,14 @@ func ParseConfig(cfg string) {
 	err = json.Unmarshal([]byte(configContent), &c)
 	if err != nil {
 		log.Fatalln("read config file:", cfg, "fail:", err)
+	}
+
+	if c.Rabbit.Host == "" {
+		c.Rabbit.Host, err = os.Hostname()
+		if err != nil {
+			log.Fatalln("ERROR: get local hostname fail")
+			os.Exit(1)
+		}
 	}
 
 	config = &c

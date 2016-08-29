@@ -4,7 +4,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"fmt"
 	"net"
@@ -12,23 +11,12 @@ import (
 )
 
 func GetHost() string {
-	host := Config().Rabbit.Host
-	if host != "" {
-		return host
-	}
-
-	host, err := os.Hostname()
-	if err != nil {
-		log.Println("ERROR: os.Hostname() fail", err)
-		return "127.0.0.1"
-	}
-	return host
+	return  Config().Rabbit.Host
 }
 
 func GetApiUrl(service string) string {
-	host := GetHost()
 	port := Config().Rabbit.Port
-	api_url := "http://" + host + ":" + strconv.Itoa(port) + "/api/" + service
+	api_url := "http://127.0.0.1" + ":" + strconv.Itoa(port) + "/api/" + service
 	return api_url
 }
 
