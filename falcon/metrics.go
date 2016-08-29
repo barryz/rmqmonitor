@@ -128,9 +128,9 @@ func handleOverview(data []*MetaData) []*MetaData {
 	data = append(data, NewMetric(OvPrefix + "publishRate", ov.Publish_Rates.Rate, ""))
 	data = append(data, NewMetric(OvPrefix + "redeliverRate", ov.Redeliver_Rates.Rate, ""))
 	data = append(data, NewMetric(OvPrefix + "ackRate", ov.Ack_Rates.Rate, ""))
-	data = append(data, NewMetric(OvPrefix + "ioReadawit", nd.Rawait, "")) // io_read_avg_wait_time
-	data = append(data, NewMetric(OvPrefix + "ioWriteawit", nd.Wawait, "")) // io_write_avg_wait_time
-	data = append(data, NewMetric(OvPrefix + "ioSyncawit", nd.Syncawait, "")) // io_sync_avg_wait_time
+	data = append(data, NewMetric(OvPrefix + "ioReadawait", nd.Rawait, "")) // io_read_avg_wait_time
+	data = append(data, NewMetric(OvPrefix + "ioWriteawait", nd.Wawait, "")) // io_write_avg_wait_time
+	data = append(data, NewMetric(OvPrefix + "ioSyncawait", nd.Syncawait, "")) // io_sync_avg_wait_time
 	data = append(data, NewMetric(OvPrefix + "memConnreader", nd.Connection_readers, ""))
 	data = append(data, NewMetric(OvPrefix + "memConnwriter", nd.Connection_writers, ""))
 	data = append(data, NewMetric(OvPrefix + "memConnchannels", nd.Connection_channels, ""))
