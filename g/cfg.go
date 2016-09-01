@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"github.com/toolkits/file"
 	"log"
-	"sync"
 	"os"
+	"sync"
 )
 
 type RabbitConfig struct {
@@ -19,6 +19,11 @@ type FalconConfig struct {
 	Api string `json:"api"`
 }
 
+type HttpConfig struct {
+	ConnTimeout int `json:"conn_timeout"`
+	RespTimeout int `json:"response_timeout"`
+}
+
 type GlobalConfig struct {
 	Debug     bool          `json:"debug"`
 	Details   bool          `json:"details`
@@ -28,6 +33,7 @@ type GlobalConfig struct {
 	Interval  int64         `json:"interval"`
 	Rabbit    *RabbitConfig `json:"rabbitmq"`
 	Falcon    *FalconConfig `json:"falcon"`
+	Http      *HttpConfig   `json:"http"`
 	Ignores   []string      `json:"ignore_queue"`
 	Qrunning  []string      `json:"qrunning"`
 }

@@ -1,17 +1,17 @@
 package g
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"strconv"
-	"fmt"
-	"net"
 	"time"
 )
 
 func GetHost() string {
-	return  Config().Rabbit.Host
+	return Config().Rabbit.Host
 }
 
 func GetApiUrl(service string) string {
@@ -23,13 +23,15 @@ func GetApiUrl(service string) string {
 func RabbitApi(service string) ([]byte, error) {
 	url := GetApiUrl(service)
 	user := Config().Rabbit.User
+	conn_timeout := Config().Http.ConnTimeout
+	resp_timeout := Config().Http.RespTimeout
 	password := Config().Rabbit.Password
 
 	// set connect/get/resp timeout
 	client := &http.Client{
 		Transport: &http.Transport{
 			Dial: func(netw, addr string) (net.Conn, error) {
-				c, err := net.DialTimeout(netw, addr, time.Second * 5)
+				c, err := net.DialTimeout(netw, addr, time.Second*time.Duration(conn_timeout))
 				if err != nil {
 					log.Println("ERROR: dail timeout", err)
 					return nil, err
@@ -38,7 +40,7 @@ func RabbitApi(service string) ([]byte, error) {
 
 			},
 			MaxIdleConnsPerHost:   10,
-			ResponseHeaderTimeout: time.Second * 5,
+			ResponseHeaderTimeout: time.Second * time.Duration(resp_timeout),
 		},
 	}
 	request, _ := http.NewRequest("GET", url, nil)

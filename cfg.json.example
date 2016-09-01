@@ -1,15 +1,19 @@
 {
-  "debug": false,
-  "version": "0.0.1",
+  "debug": true,
+  "version": "0.1.3",
   "hostname": "",
-  "interval": 10,
+  "interval": 3,
   "batchsize": 100,
   "details": true,
+  "http": {
+    "conn_timeout": 5,
+    "response_timeout": 5
+  },
   "rabbitmq": {
     "host": "",
     "port": 15672,
     "user": "admin",
-    "password": "admin"
+    "password": "On1NgXOoy3lLMO"
   },
   "falcon": {
     "api": "http://127.0.0.1:1988/v1/push"
