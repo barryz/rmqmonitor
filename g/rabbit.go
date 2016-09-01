@@ -29,7 +29,7 @@ func RabbitApi(service string) ([]byte, error) {
 	client := &http.Client{
 		Transport: &http.Transport{
 			Dial: func(netw, addr string) (net.Conn, error) {
-				c, err := net.DialTimeout(netw, addr, time.Second * 3)
+				c, err := net.DialTimeout(netw, addr, time.Second * 5)
 				if err != nil {
 					log.Println("ERROR: dail timeout", err)
 					return nil, err
@@ -38,7 +38,7 @@ func RabbitApi(service string) ([]byte, error) {
 
 			},
 			MaxIdleConnsPerHost:   10,
-			ResponseHeaderTimeout: time.Second * 2,
+			ResponseHeaderTimeout: time.Second * 5,
 		},
 	}
 	request, _ := http.NewRequest("GET", url, nil)
