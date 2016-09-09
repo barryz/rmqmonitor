@@ -68,6 +68,3 @@ RabbitMQ 状态数据采集脚本
 |rabbitmq.queue.messages_unacked|name=$queue-name,vhost=$vhost|GAUGE|该队列消费未确认消息数|
 |rabbitmq.queue.messages_status|name=$queue-name,vhost=$vhost|GAUGE|该队列状态(非idle/running,即认为不健康)|
 
-
-
-
