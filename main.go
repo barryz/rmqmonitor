@@ -2,11 +2,11 @@ package main
 
 import (
 	"flag"
-	"time"
 	"fmt"
-	"os"
+	"github.com/barryz/rmqmonitor/falcon"
 	"github.com/barryz/rmqmonitor/g"
-	"github.com/barryz/rmqmonitor/funcs"
+	"os"
+	"time"
 )
 
 func Collect() {
