@@ -2,7 +2,7 @@ package funcs
 
 import (
 	"encoding/json"
-	"rmqmon/g"
+	"github.com/barryz/rmqmonitor/g"
 	"strings"
 	"log"
 )

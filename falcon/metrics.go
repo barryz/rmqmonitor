@@ -3,11 +3,11 @@ package falcon
 import (
 	"fmt"
 	"log"
-	"rmqmon/funcs"
-	"rmqmon/g"
 	"strconv"
 	"strings"
 	"time"
+	"github.com/barryz/rmqmonitor/funcs"
+	"github.com/barryz/rmqmonitor/g"
 )
 
 var (

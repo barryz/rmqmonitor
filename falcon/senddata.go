@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"rmqmon/g"
 	"log"
+	"github.com/barryz/rmqmonitor/g"
 )
 
 func sendData(data []*MetaData) ([]byte, error) {

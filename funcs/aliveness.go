@@ -2,8 +2,8 @@ package funcs
 
 import (
 	"encoding/json"
-	"rmqmon/g"
 	"log"
+	"github.com/barryz/rmqmonitor/g"
 )
 
 type AliveNess struct {

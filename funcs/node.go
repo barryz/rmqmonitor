@@ -3,7 +3,7 @@ package funcs
 import (
 	"encoding/json"
 	"log"
-	"rmqmon/g"
+	"github.com/barryz/rmqmonitor/g"
 )
 
 type MemStats struct {
