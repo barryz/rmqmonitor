@@ -20,6 +20,7 @@ type MemStats struct {
 	Msg_index           int64 `json:"msg_index"`
 	Code                int64 `json:"code"`
 	Atom                int64 `json:"atom"`
+	Binary              int64 `json:"binary"`
 }
 
 type NodeStats struct {

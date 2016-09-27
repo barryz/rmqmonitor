@@ -138,6 +138,7 @@ func handleOverview(data []*MetaData) []*MetaData {
 	data = append(data, NewMetric(OvPrefix + "memMgmtdb", nd.Mgmt_db, ""))
 	data = append(data, NewMetric(OvPrefix + "memPlugins", nd.Plugins, ""))
 	data = append(data, NewMetric(OvPrefix + "memMsgidx", nd.Msg_index, ""))
+	data = append(data, NewMetric(OvPrefix + "memBinary", nd.Binary, ""))
 	data = append(data, NewMetric(OvPrefix + "fdUsedPct", calcpct(nd.FdUsed, nd.FdTotal), ""))
 	data = append(data, NewMetric(OvPrefix + "memUsedPct", calcpct(nd.MemUsed, nd.MemLimit), ""))
 	data = append(data, NewMetric(OvPrefix + "socketUsedPct", calcpct(nd.SocketsUsed, nd.SocketsTotal), ""))
