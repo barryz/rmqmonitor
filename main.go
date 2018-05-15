@@ -3,17 +3,32 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/barryz/rmqmonitor/cron"
 	"github.com/barryz/rmqmonitor/falcon"
 	"github.com/barryz/rmqmonitor/g"
-	"os"
-	"time"
+	v "github.com/barryz/rmqmonitor/version"
+	"github.com/barryz/rmqmonitor/witch"
 )
 
-func Collect() {
-	go collect(g.Config().Interval)
+func collect() {
+	go metricCollector(g.Config().Interval)
 }
 
-func collect(sec int64) {
+func rotateQLog() {
+	go cron.CronStart()
+}
+
+func witchLaunch() {
+	go witch.Launch()
+}
+
+func metricCollector(sec int64) {
 	t := time.NewTicker(time.Second * time.Duration(sec)).C
 	for {
 		<-t
@@ -28,14 +43,31 @@ func main() {
 	flag.Parse()
 
 	if *ver {
-		fmt.Println(g.VERSION)
+		fmt.Println(v.Build)
 		os.Exit(0)
 	}
 
 	g.ParseConfig(*cfg)
 
-	Collect()
+	if g.Config().Enabled.Collect {
+		collect()
+	}
+
+	if g.Config().Enabled.LogRotate {
+		rotateQLog()
+	}
+
+	if g.Config().Enabled.Witch {
+		witchLaunch()
+	}
+
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
+	go func() {
+		sig := <-signals
+		log.Printf("Signal %v captured", sig)
+		os.Exit(0)
+	}()
 
 	select {}
-
 }

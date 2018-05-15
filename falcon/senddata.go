@@ -3,30 +3,33 @@ package falcon
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
+	"fmt"
 	"log"
+	"net/http"
+
 	"github.com/barryz/rmqmonitor/g"
 )
 
-func sendData(data []*MetaData) ([]byte, error) {
+func sendData(data []*MetaData) (resp []byte, err error) {
 	debug := g.Config().Debug
 	js, err := json.Marshal(data)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	if debug {
 		log.Printf("agent api recieved %d metrics", len(data))
 	}
 
-	res, err := http.Post(g.Config().Falcon.Api, "Content-Type: application/json", bytes.NewBuffer(js))
+	res, err := http.Post(g.Config().Falcon.API, "Content-Type: application/json", bytes.NewBuffer(js))
 	if err != nil {
-		return nil, err
+		err = fmt.Errorf("[ERROR]: sent data to falcon agent api fail due to %s", err.Error())
+		return
 	}
 
 	defer res.Body.Close()
-	return ioutil.ReadAll(res.Body)
+
+	return
 }
 
 func sendDatas(m []*MetaData) {
@@ -34,17 +37,17 @@ func sendDatas(m []*MetaData) {
 	limit, lens := g.Config().Batchsize, len(m)
 	if lens >= limit {
 		offset := lens % limit
-		for i := 0; i <= lens - 1; i += limit {
+		for i := 0; i <= lens-1; i += limit {
 			if (i + limit - 1) >= lens {
 				_, err := sendData(m[i:(offset + i - 1)])
 				if err != nil {
-					log.Println("ERROR:", err)
+					log.Println(err.Error())
 					break
 				}
 			} else {
 				_, err := sendData(m[i:(limit + i - 1)])
 				if err != nil {
-					log.Println("ERROR:", err)
+					log.Println(err.Error())
 					break
 				}
 			}
@@ -52,7 +55,7 @@ func sendDatas(m []*MetaData) {
 	} else {
 		_, err := sendData(m)
 		if err != nil {
-			log.Println("ERROR:", err)
+			log.Println(err.Error())
 		}
 	}
 }

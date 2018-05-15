@@ -2,27 +2,31 @@ package funcs
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
+
 	"github.com/barryz/rmqmonitor/g"
 )
 
+// MemStats ...
 type MemStats struct {
-	Total               int64 `json:"total"`
-	Connection_readers  int64 `json:"connection_readers"`
-	Connection_writers  int64 `json:"connection_writers"`
-	Connection_channels int64 `json:"connection_channels"`
-	Connection_other    int64 `json:"connection_other"`
-	Queue_procs         int64 `json:"queue_procs"`
-	Queue_slave_procs   int64 `json:"queue_slave_procs"`
-	Plugins             int64 `json:"plugins"`
-	Mnesia              int64 `json:"mnesia"`
-	Mgmt_db             int64 `json:"mgmt_db"`
-	Msg_index           int64 `json:"msg_index"`
-	Code                int64 `json:"code"`
-	Atom                int64 `json:"atom"`
-	Binary              int64 `json:"binary"`
+	Total              int64 `json:"total"`
+	ConnectionReaders  int64 `json:"connection_readers"`
+	ConnectionWriters  int64 `json:"connection_writers"`
+	ConnectionChannels int64 `json:"connection_channels"`
+	ConnectionOther    int64 `json:"connection_other"`
+	QueueProcs         int64 `json:"queue_procs"`
+	QueueSlaveProcs    int64 `json:"queue_slave_procs"`
+	Plugins            int64 `json:"plugins"`
+	Mnesia             int64 `json:"mnesia"`
+	MgmtDB             int64 `json:"mgmt_db"`
+	MsgIndex           int64 `json:"msg_index"`
+	Code               int64 `json:"code"`
+	Atom               int64 `json:"atom"`
+	Binary             int64 `json:"binary"`
 }
 
+// NodeStats ...
 type NodeStats struct {
 	MemStats     `json:"memory"`
 	Partitions   []string `json:"partitions"`
@@ -38,28 +42,45 @@ type NodeStats struct {
 	ErlProcUsed  int64    `json:"proc_used"`
 	ErlProcTotal int64    `json:"proc_total"`
 	RunQueues    int64    `json:"run_queue"`
+	MemAlarm     bool     `json:"mem_alarm"`
+	DiskAlarm    bool     `json:"disk_free_alarm"`
 }
 
-func GetNode() *NodeStats {
+// MemAlarmStatus 内存告警指标
+func (n *NodeStats) MemAlarmStatus() int {
+	if n.MemAlarm {
+		return 0
+	}
+	return 1
+}
+
+// DiskAlarmStatus 磁盘告警指标
+func (n *NodeStats) DiskAlarmStatus() int {
+	if n.DiskAlarm {
+		return 0
+	}
+	return 1
+}
+
+// GetNode ...
+func GetNode() (n *NodeStats, err error) {
 	host := g.GetHost()
 	if g.Config().Debug {
-		log.Printf("INFO: Get hostname %s.", host)
+		log.Printf("[INFO]: Get hostname %s.", host)
 	}
 
 	service := "nodes/rabbit@" + host + "?memory=true"
-	var result NodeStats
-
-	res, err := g.RabbitApi(service)
+	// service := "nodes/rabbit@" + "vm-test-barryz" + "?memory=true"
+	res, err := g.RabbitAPI(service)
 	if err != nil {
-		log.Println(err)
-		return &result
+		err = fmt.Errorf("[ERROR]: get rabbitmq node info fail due to %s", err.Error())
+		return
 	}
 
-	err = json.Unmarshal(res, &result)
+	err = json.Unmarshal(res, &n)
 	if err != nil {
-		log.Println("ERROR: unmarshal json data fail, ", err)
-		return &result
+		err = fmt.Errorf("[ERROR]: unmarshal rabbitmq node info json data fail due to %s", err.Error())
+		return
 	}
-
-	return &result
+	return
 }

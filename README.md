@@ -50,6 +50,9 @@ RabbitMQ 状态数据采集脚本
 |rabbitmq.overview.memMgmtdb| |GAUGE|内存使用详情(management db)|
 |rabbitmq.overview.memMnesia| |GAUGE|内存使用详情(Mnesia)|
 |rabbitmq.overview.runQueue| |GAUGE|Erlang进程run_queue数量|
+|rabbitmq.overview.getChannelCost | |GAUGE|获取channel耗时|
+|rabbitmq.overview.memAlarm| |GAUGE|是否触发内存告警|
+|rabbitmq.overview.diskAlarm| |GAUGE|是否触发磁盘告警|
 
 - **Queue指标**
 
@@ -67,4 +70,53 @@ RabbitMQ 状态数据采集脚本
 |rabbitmq.queue.messages_ready|name=$queue-name,vhost=$vhost|GAUGE|该队列等待被消费消息数|
 |rabbitmq.queue.messages_unacked|name=$queue-name,vhost=$vhost|GAUGE|该队列消费未确认消息数|
 |rabbitmq.queue.messages_status|name=$queue-name,vhost=$vhost|GAUGE|该队列状态(非idle/running,即认为不健康)|
+
+
+- **Exchange指标**
+
+| key | tag | type | note |
+|-----|-----|------|------|
+|rabbitmq.exchange.publish_in|name=$exchange-name,vhost=$vhost|GAUGE|该exchange接收消息速率|
+|rabbitmq.exchange.publish_out|name=$exchange-name,vhost=$vhost|GAUGE|该exchange转发消息速率|
+|rabbitmq.exchange.confirm|name=$exchange-name,vhost=$vhost|GAUGE|该exchange确认消息速率|
+
+---
+
+**Witch功能**
+
+  `spiderQ` start a web service and listen on port 5671, it enable basicauth, and handle client's requests.
+
+- RabbitMQ进程管理(graceful)
+
+```bash
+curl -u noadmin:ADMIN -XPUT -d '{"name":"is_alive"}' http://127.0.0.1:5671/api/app/actions
+
+curl -u noadmin:ADMIN -XPUT -d '{"name":"start"}' http://127.0.0.1:5671/api/app/actions
+
+curl -u noadmin:ADMIN -XPUT -d '{"name":"stop"}' http://127.0.0.1:5671/api/app/actions
+
+curl -u noadmin:ADMIN -XPUT -d '{"name":"restart"}' http://127.0.0.1:5671/api/app/actions
+```
+
+- RabbitMQ进程强制关闭
+
+```bash
+curl -u noadmin:ADMIN -XGET http://127.0.0.1:5671/api/app/fstop
+```
+
+- 获取当前RabbitMQ状态节点信息
+
+```bash
+curl -u noadmin:ADMIN -XGET http://127.0.0.1:5671/api/stats
+```
+
+- 操作RabbitMQ集群状态节点
+
+```bash
+curl -u noadmin:ADMIN -XPUT -d '{"name":"reset"}' http://127.0.0.1:5671/api/stats/actions
+
+curl -u noadmin:ADMIN -XPUT -d '{"name":"crash"}' http://127.0.0.1:5671/api/stats/actions
+
+curl -u noadmin:ADMIN -XPUT -d '{"name":"terminate"}' http://127.0.0.1:5671/api/stats/actions
+```
 

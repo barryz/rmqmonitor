@@ -2,89 +2,84 @@ package funcs
 
 import (
 	"encoding/json"
-	"github.com/barryz/rmqmonitor/g"
+	"fmt"
 	"strings"
-	"log"
+
+	"github.com/barryz/rmqmonitor/g"
 )
 
+// QueueRate ...
 type QueueRate struct {
 	Rate float64 `json:"rate"`
 }
 
+// QueueMsgStat ...
 type QueueMsgStat struct {
-	Publish     QueueRate `json:"publish_details"`
-	Deliver_get QueueRate `json:"deliver_get_details"`
-	Ack         QueueRate `json:"ack_details"`
-	Redeliver   QueueRate `json:"redeliver_details"`
+	Publish    QueueRate `json:"publish_details"`
+	DeliverGet QueueRate `json:"deliver_get_details"`
+	Ack        QueueRate `json:"ack_details"`
+	Redeliver  QueueRate `json:"redeliver_details"`
 }
 
+// QueueMap ...
 type QueueMap struct {
-	Memory          int64   `json:"memory"`
-	Messages        int64   `json:"messages"`
-	MessagesReady   int64   `json:"messages_ready"`
-	MessagesUnacked int64   `json:"messages_unacknowledged"`
+	Memory          int64       `json:"memory"`
+	Messages        int64       `json:"messages"`
+	MessagesReady   int64       `json:"messages_ready"`
+	MessagesUnacked int64       `json:"messages_unacknowledged"`
 	ConsumerUtil    interface{} `json:"consumer_utilisation"`
-	Consumers       int64   `json:"consumers"`
-	Status          string  `json:"state"`
-	Name            string  `json:"name"`
-	Vhost           string  `json:"vhost"`
-	Auto_Delete     bool    `json:"auto_delete"`
+	Consumers       int64       `json:"consumers"`
+	Status          string      `json:"state"`
+	Name            string      `json:"name"`
+	Vhost           string      `json:"vhost"`
+	AutoDelete      bool        `json:"auto_delete"`
 	QueueMsgStat    `json:"message_stats"`
 }
 
 func filterQueue(q *QueueMap) bool {
-	var (
-		isignore bool = false
-		isad bool = false
-		isvhost bool = false
-	)
+	isIgnore := false
 	ignores := g.Config().Ignores
 
 	for _, i := range ignores {
 		if strings.Contains(strings.ToLower(q.Name), i) {
-			isignore = true
+			isIgnore = true
 		} else {
 			continue
 		}
 	}
 
-	if q.Auto_Delete {
-		isad = true
-	}
-
-	if q.Vhost == "/" {
-		isvhost = true
-	}
-
-	if isignore || isad || isvhost {
+	if isIgnore {
 		return true
-	} else {
-		return false
 	}
+
+	return false
 }
 
-func GetQueues() *[]QueueMap {
+// GetQueues ...
+func GetQueues() (qm []*QueueMap, err error) {
 	var (
-		queues    []QueueMap
-		newqueues []QueueMap
+		queues []*QueueMap
 	)
 
 	service := "queues"
-	res, err := g.RabbitApi(service)
+	res, err := g.RabbitAPI(service)
 	if err != nil {
-		log.Println(err)
-		return &newqueues
-	}
-	if err := json.Unmarshal(res, &queues); err != nil {
-		log.Println("ERROR: unmarshal queue file fail, ", err)
-		return &newqueues
+		err = fmt.Errorf("[ERROR]: get rabbitmq queue info fail due to %s", err.Error())
+		return
 	}
 
+	err = json.Unmarshal(res, &queues)
+	if err != nil {
+		err = fmt.Errorf("[ERROR]: unmarshal rabbitmq queue json data fail due to %s", err.Error())
+		return
+	}
+
+	qm = make([]*QueueMap, len(queues))
 	for _, q := range queues {
-		if !filterQueue(&q) {
-			newqueues = append(newqueues, q)
+		if !filterQueue(q) {
+			qm = append(qm, q)
 		}
 	}
 
-	return &newqueues
+	return
 }

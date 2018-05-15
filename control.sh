@@ -49,7 +49,7 @@ function start() {
 
 function stop() {
     pid=`cat $pidfile`
-    kill $pid
+    skill -9 $pid &>/dev/null
     rm -f $pidfile
     echo "$app stoped..."
 }
