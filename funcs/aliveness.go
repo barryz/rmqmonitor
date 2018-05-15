@@ -2,38 +2,42 @@ package funcs
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
+
 	"github.com/barryz/rmqmonitor/g"
 )
 
-type AliveNess struct {
+// Aliveness ...
+type Aliveness struct {
 	Status string `json:"status"`
 }
 
-func GetAlive() *AliveNess {
+// GetAlive ...
+func GetAlive() (aliveness *Aliveness, err error) {
 	service := "aliveness-test/%2f"
-	var result AliveNess
 
-	res, err := g.RabbitApi(service)
+	res, err := g.RabbitAPI(service)
 	if err != nil {
-		log.Println(err)
-		return &result
+		err = fmt.Errorf("[ERROR]: get rabbitmq aliveness fail due to %s", err.Error())
+		return
 	}
 
-	err = json.Unmarshal(res, &result)
+	err = json.Unmarshal(res, &aliveness)
 	if err != nil {
-		log.Println("ERROR: unmarshal json data fail, ", err)
-		return &result
+		err = fmt.Errorf("[ERROR]: unmarshal rabbitmq aliveness json data fail due to %s", err.Error())
+		return
 	}
 
-	return &result
+	return
 }
 
-func CheckAlive() bool {
+// CheckAlive ...
+func CheckAlive() (ok bool) {
 	service := "whoami"
-	if _, err := g.RabbitApi(service); err == nil {
-		return true
-	} else {
-		return false
+	if _, err := g.RabbitAPI(service); err == nil {
+		ok = true
+		return
 	}
+
+	return
 }
