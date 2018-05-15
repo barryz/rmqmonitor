@@ -46,7 +46,7 @@ type NodeStats struct {
 	DiskAlarm    bool     `json:"disk_free_alarm"`
 }
 
-// MemAlarmStatus 内存告警指标
+// MemAlarmStatus memory alarm status
 func (n *NodeStats) MemAlarmStatus() int {
 	if n.MemAlarm {
 		return 0
@@ -54,7 +54,7 @@ func (n *NodeStats) MemAlarmStatus() int {
 	return 1
 }
 
-// DiskAlarmStatus 磁盘告警指标
+// DiskAlarmStatus disc alarm status
 func (n *NodeStats) DiskAlarmStatus() int {
 	if n.DiskAlarm {
 		return 0
