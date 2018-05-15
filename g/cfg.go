@@ -9,6 +9,7 @@ import (
 	"github.com/toolkits/file"
 )
 
+// EnableConfig configs which can be used
 type EnableConfig struct {
 	Collect   bool `json:"collect"`
 	LogRotate bool `json:"log_rotate"`
@@ -39,7 +40,7 @@ type SchedulerConfig struct {
 	LogRotate string `json:"log_rotate"`
 }
 
-// Witch Program Config ...
+// WitchConfig Program Config ...
 type WitchConfig struct {
 	ListenAddr string            `json:"listen"`
 	Control    string            `json:"control"`

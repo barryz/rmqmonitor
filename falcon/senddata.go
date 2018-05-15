@@ -18,7 +18,7 @@ func sendData(data []*MetaData) (resp []byte, err error) {
 	}
 
 	if debug {
-		log.Printf("agent api recieved %d metrics", len(data))
+		log.Printf("agent api received %d metrics", len(data))
 	}
 
 	res, err := http.Post(g.Config().Falcon.API, "Content-Type: application/json", bytes.NewBuffer(js))

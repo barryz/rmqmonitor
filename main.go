@@ -21,7 +21,7 @@ func collect() {
 }
 
 func rotateQLog() {
-	go cron.CronStart()
+	go cron.Start()
 }
 
 func witchLaunch() {

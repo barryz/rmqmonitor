@@ -4,6 +4,7 @@ import (
 	"github.com/barryz/rmqmonitor/utils"
 )
 
+// StatsDB stats management database
 type StatsDB struct {
 	CurrentLocate   string `json:"current_locate"`
 	PreviousLocate  string `json:"previous_locate"`
@@ -16,6 +17,7 @@ func NewStatsDB() *StatsDB {
 	return &StatsDB{}
 }
 
+// SetCurrentLocate setting current database location
 func (s *StatsDB) SetCurrentLocate(locate string) {
 	if s.CurrentLocate != locate {
 		s.PreviousLocate = s.CurrentLocate
