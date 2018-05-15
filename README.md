@@ -1,92 +1,102 @@
-# Golang版本RabbitMQ监控agent
------
+# rmqmonitor
 
-RabbitMQ 状态数据采集脚本
------------------------------------------------------------
+[![Go Report Card](https://goreportcard.com/badge/github.com/barryz/rmqmonitor)](https://goreportcard.com/report/github.com/barryz/rmqmonitor)
+[![Build Status](https://travis-ci.org/barryz/run.svg?branch=master)](https://travis-ci.org/barryz/rmqmonitor)
+[![Apache 2 licensed](https://img.shields.io/badge/license-Apache2-blue.svg)](https://raw.githubusercontent.com/oklog/run/master/LICENSE)
 
-## Requirement:
-- os: Linux
+rmqmonitor is an agent that used for [open-falcon](http://open-falcon.org/) to monitoring [RabbitMQ](https://www.rabbitmq.com/).
 
------------------------------------------------------------
+## Arch Requirement
+Linux
 
-## 原理
------------------------------------------------------------
-通过RabbitMQ REST API 获取MQ相关状态数据，然后整合固定数据类型，推送到不同的监控系统。
+## Build
 
-## 相关指标
-------------------------------------------------
-- **overview指标**
+```bash
+$make build
+```
+
+## Agent launch
+
+```bash
+$/bin/bash control.sh start|stop|restart
+```
+It will create a temporary directory `var` in your current path.
+
+## Metrics
+
+***overview metrics***:
 
 | key | tag | type | note |
 |-----|-----|------|------|
-|rabbitmq.overview.publishRate| |GAUGE|生产总速率|
-|rabbitmq.overview.deliverRate| |GAUGE|消费总速率|
-|rabbitmq.overview.redeliverRate| |GAUGE|重新投递总速率|
-|rabbitmq.overview.ackRate| |GAUGE|消费者确认总速率|
-|rabbitmq.overview.msgsTotal| |GAUGE|消息总数, 等于ready + unack|
-|rabbitmq.overview.msgsReadyTotal| |GAUGE|消息堆积总数|
-|rabbitmq.overview.msgsUnackTotal| |GAUGE|消费未确认消息总数|
-|rabbitmq.overview.publishTotal| |GAUGE|生产消息总数|
-|rabbitmq.overview.deliverTotal| |GAUGE|投递消息总数|
-|rabbitmq.overview.redeliverTotal| |GAUGE|重新投递消息总数|
-|rabbitmq.overview.channlesTotal| |GAUGE|Channel 总数|
-|rabbitmq.overview.connectionsTotal| |GAUGE|Connection 总数|
-|rabbitmq.overview.consumersTotal| |GAUGE|Counsumer总数|
-|rabbitmq.overview.queuesTotal| |GAUGE|队列总数|
-|rabbitmq.overview.exchangesTotal| |GAUGE|exchange 总数|
-|rabbitmq.overview.isAlive| |GAUGE|MQ健康状态(通过生产/消费判断集群读写)|
-|rabbitmq.overview.isPartition| |GAUGE|MQ集群网络分区状态|
-|rabbitmq.overview.memUsedPct| |GAUGE|内存使用占比|
-|rabbitmq.overview.fdUsedPct| |GAUGE|file desc使用占比|
-|rabbitmq.overview.erlProcsUsedPct| |GAUGE|Erlang 进程使用占比|
-|rabbitmq.overview.socketUsedPct| |GAUGE|socket使用占比|
-|rabbitmq.overview.statsDbEvent| |GAUGE|状态统计数据库事件队列个数|
+|rabbitmq.overview.publishRate| |GAUGE|rate of message publishing|
+|rabbitmq.overview.deliverRate| |GAUGE|rate of message delivering|
+|rabbitmq.overview.redeliverRate| |GAUGE|rate of message re-delivering|
+|rabbitmq.overview.ackRate| |GAUGE|rate of message acknowledging|
+|rabbitmq.overview.msgsTotal| |GAUGE|total messages(sum of unack and ready|
+|rabbitmq.overview.msgsReadyTotal| |GAUGE|ready messages(not deliver yet)|
+|rabbitmq.overview.msgsUnackTotal| |GAUGE|un-acknowledged messages|
+|rabbitmq.overview.publishTotal| |GAUGE|total messaees of publishing|
+|rabbitmq.overview.deliverTotal| |GAUGE|total messaees of delivering|
+|rabbitmq.overview.redeliverTotal| |GAUGE|total messaees of re-delivering|
+|rabbitmq.overview.channlesTotal| |GAUGE|total channels|
+|rabbitmq.overview.connectionsTotal| |GAUGE|total connections|
+|rabbitmq.overview.consumersTotal| |GAUGE|total counsumers|
+|rabbitmq.overview.queuesTotal| |GAUGE|total queues|
+|rabbitmq.overview.exchangesTotal| |GAUGE|total exchanges|
+|rabbitmq.overview.isAlive| |GAUGE|healthy status of cluster|
+|rabbitmq.overview.isPartition| |GAUGE|partition status of cluster|
+|rabbitmq.overview.memUsedPct| |GAUGE|memory usage percentage|
+|rabbitmq.overview.fdUsedPct| |GAUGE|percentage of fd usage|
+|rabbitmq.overview.erlProcsUsedPct| |GAUGE|percentage of erlang processes|
+|rabbitmq.overview.socketUsedPct| |GAUGE|percentage of socket usage|
+|rabbitmq.overview.statsDbEvent| |GAUGE|the events of queue produced by management database|
 |rabbitmq.overview.ioReadawait| |GAUGE|io_read_avg_wait_time|
 |rabbitmq.overview.ioWriteawait| |GAUGE|io_write_avg_wait_time|
 |rabbitmq.overview.ioSyncawait| |GAUGE|io_sync_avg_wait_time|
-|rabbitmq.overview.memConnreader| |GAUGE|内存使用详情(connections reader)|
-|rabbitmq.overview.memConnwriter| |GAUGE|内存使用详情(connections writer)|
-|rabbitmq.overview.memConnchannels| |GAUGE|内存使用详情(connections channels)|
-|rabbitmq.overview.memMgmtdb| |GAUGE|内存使用详情(management db)|
-|rabbitmq.overview.memMnesia| |GAUGE|内存使用详情(Mnesia)|
-|rabbitmq.overview.runQueue| |GAUGE|Erlang进程run_queue数量|
-|rabbitmq.overview.getChannelCost | |GAUGE|获取channel耗时|
-|rabbitmq.overview.memAlarm| |GAUGE|是否触发内存告警|
-|rabbitmq.overview.diskAlarm| |GAUGE|是否触发磁盘告警|
+|rabbitmq.overview.memConnreader| |GAUGE|memory usage for connections reader|
+|rabbitmq.overview.memConnwriter| |GAUGE|memory usage for connections writer|
+|rabbitmq.overview.memConnchannels| |GAUGE|memory usage for connections channels|
+|rabbitmq.overview.memMgmtdb| |GAUGE|memory usage for management db)|
+|rabbitmq.overview.memMnesia| |GAUGE|memory usage for mnesia database)|
+|rabbitmq.overview.runQueue| |GAUGE|total run_queues of Erlang|
+|rabbitmq.overview.getChannelCost | |GAUGE|latency for getting channels|
+|rabbitmq.overview.memAlarm| |GAUGE|memory alarm triggered|
+|rabbitmq.overview.diskAlarm| |GAUGE|disc alarm triggered|
 
-- **Queue指标**
-
-| key | tag | type | note |
-|-----|-----|------|------|
-|rabbitmq.queue.publish|name=$queue-name,vhost=$vhost|GAUGE|该队列生产消息速率|
-|rabbitmq.queue.delver_get|name=$queue-name,vhost=$vhost|GAUGE|该队列投递消息速率|
-|rabbitmq.queue.redeliver|name=$queue-name,vhost=$vhost|GAUGE|该队列重新投递消息速率|
-|rabbitmq.queue.ack|name=$queue-name,vhost=$vhost|GAUGE|该队列consumer确认消息速率|
-|rabbitmq.queue.consumers|name=$queue-name,vhost=$vhost|GAUGE|该队列consumer个数|
-|rabbitmq.queue.consumer_utilisation|name=$queue-name,vhost=$vhost|GAUGE|该队列消费利用率(消费能力)|
-|rabbitmq.queue.dpratio|name=$queue-name,vhost=$vhost|GAUGE|该队列消费生产速率比|
-|rabbitmq.queue.memory|name=$queue-name,vhost=$vhost|GAUGE|该队列所占内存字节数|
-|rabbitmq.queue.messages|name=$queue-name,vhost=$vhost|GAUGE|该队列消息总数|
-|rabbitmq.queue.messages_ready|name=$queue-name,vhost=$vhost|GAUGE|该队列等待被消费消息数|
-|rabbitmq.queue.messages_unacked|name=$queue-name,vhost=$vhost|GAUGE|该队列消费未确认消息数|
-|rabbitmq.queue.messages_status|name=$queue-name,vhost=$vhost|GAUGE|该队列状态(非idle/running,即认为不健康)|
-
-
-- **Exchange指标**
+***Queue Metrics***
 
 | key | tag | type | note |
 |-----|-----|------|------|
-|rabbitmq.exchange.publish_in|name=$exchange-name,vhost=$vhost|GAUGE|该exchange接收消息速率|
-|rabbitmq.exchange.publish_out|name=$exchange-name,vhost=$vhost|GAUGE|该exchange转发消息速率|
-|rabbitmq.exchange.confirm|name=$exchange-name,vhost=$vhost|GAUGE|该exchange确认消息速率|
+|rabbitmq.queue.publish|name=$queue-name,vhost=$vhost|GAUGE|rate of message publishing with specified queue|
+|rabbitmq.queue.delver_get|name=$queue-name,vhost=$vhost|GAUGE|rate of message delivering with specified queue|
+|rabbitmq.queue.redeliver|name=$queue-name,vhost=$vhost|GAUGE|rate of message re-delivering with specified queue|
+|rabbitmq.queue.ack|name=$queue-name,vhost=$vhost|GAUGE|rate of message acknowledging with specified queue|
+|rabbitmq.queue.consumers|name=$queue-name,vhost=$vhost|GAUGE|total consumers with specified queue|
+|rabbitmq.queue.consumer_utilisation|name=$queue-name,vhost=$vhost|GAUGE|consumers utilisation of the specified queue|
+|rabbitmq.queue.dpratio|name=$queue-name,vhost=$vhost|GAUGE|the radio of deliver and publish with specified queue|
+|rabbitmq.queue.memory|name=$queue-name,vhost=$vhost|GAUGE|total memories occupied with specified queue|
+|rabbitmq.queue.messages|name=$queue-name,vhost=$vhost|GAUGE|total messages with specified queue|
+|rabbitmq.queue.messages_ready|name=$queue-name,vhost=$vhost|GAUGE|ready messages with specified queue|
+|rabbitmq.queue.messages_unacked|name=$queue-name,vhost=$vhost|GAUGE|un-ack messageis with specified queue|
+|rabbitmq.queue.messages_status|name=$queue-name,vhost=$vhost|GAUGE|the status of the specified queue|
+
+
+***Exchange Metrics***
+
+| key | tag | type | note |
+|-----|-----|------|------|
+|rabbitmq.exchange.publish_in|name=$exchange-name,vhost=$vhost|GAUGE|publishing-inboud rate of the specified exchange|
+|rabbitmq.exchange.publish_out|name=$exchange-name,vhost=$vhost|GAUGE|publishing-outboud rate of the specified exchange|
+|rabbitmq.exchange.confirm|name=$exchange-name,vhost=$vhost|GAUGE|acknowledging rate of the specified exchange|
 
 ---
 
-**Witch功能**
+## Witch
+spiderQ will starting a web server to handle several instructions which to control RabbitMQ process state.
 
-  `spiderQ` start a web service and listen on port 5671, it enable basicauth, and handle client's requests.
+The web server listening on port 5671 by default, it enable basicauth, and handle client's requests.
 
-- RabbitMQ进程管理(graceful)
+***RabbitMQ process management(graceful)***
 
 ```bash
 curl -u noadmin:ADMIN -XPUT -d '{"name":"is_alive"}' http://127.0.0.1:5671/api/app/actions
@@ -98,19 +108,19 @@ curl -u noadmin:ADMIN -XPUT -d '{"name":"stop"}' http://127.0.0.1:5671/api/app/a
 curl -u noadmin:ADMIN -XPUT -d '{"name":"restart"}' http://127.0.0.1:5671/api/app/actions
 ```
 
-- RabbitMQ进程强制关闭
+***Stop RabbitMQ process forcibly***
 
 ```bash
 curl -u noadmin:ADMIN -XGET http://127.0.0.1:5671/api/app/fstop
 ```
 
-- 获取当前RabbitMQ状态节点信息
+***Get the healthy status of single RabbitMQ node***
 
 ```bash
 curl -u noadmin:ADMIN -XGET http://127.0.0.1:5671/api/stats
 ```
 
-- 操作RabbitMQ集群状态节点
+***Start/Stop/Restart RabbitMQ statistics management database***
 
 ```bash
 curl -u noadmin:ADMIN -XPUT -d '{"name":"reset"}' http://127.0.0.1:5671/api/stats/actions
@@ -119,4 +129,3 @@ curl -u noadmin:ADMIN -XPUT -d '{"name":"crash"}' http://127.0.0.1:5671/api/stat
 
 curl -u noadmin:ADMIN -XPUT -d '{"name":"terminate"}' http://127.0.0.1:5671/api/stats/actions
 ```
-

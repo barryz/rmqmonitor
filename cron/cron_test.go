@@ -1,17 +1,15 @@
 package cron
 
-
 import (
+	"fmt"
 	"testing"
-
-	"github.com/barryz/rmqmonitor/g"
 )
 
-func Test_LogRotateStart(t *testing.T) {
-	g.ParseConfig("../cfg.json")
-
-	go CronStart()
-
-	select {}
+func TestLogRotateStart(t *testing.T) {
+	fmt.Println("testing")
+	//g.ParseConfig("../cfg.json.example")
+	//
+	//go Start()
+	//
+	//select {}
 }
-

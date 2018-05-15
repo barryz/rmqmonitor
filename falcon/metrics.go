@@ -117,6 +117,7 @@ func updateCurrentStatsDB(db string) {
 	statsDB.SetCurrentLocate(db)
 }
 
+// GetCurrentStatsDB get current stats management database
 func GetCurrentStatsDB() *g.StatsDB {
 	return statsDB
 }

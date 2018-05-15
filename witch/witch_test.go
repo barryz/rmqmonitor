@@ -7,9 +7,9 @@ import (
 )
 
 func Test_SystemLauncher(t *testing.T) {
-	g.ParseConfig("../cfg.json")
+	g.ParseConfig("../cfg.json.example")
 
-	Launch()
-
-	select {}
+	//Launch()
+	//
+	//select {}
 }

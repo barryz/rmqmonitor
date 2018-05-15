@@ -8,10 +8,12 @@ import (
 	"github.com/barryz/rmqmonitor/g"
 )
 
+// VHostName name of vHost
 type VHostName struct {
 	Name string `json:"name"`
 }
 
+// ExchangeInfo information for exchange
 type ExchangeInfo struct {
 	Name     string `json:"name"`
 	VHost    string `json:"vhost"`
@@ -56,6 +58,7 @@ func getVHosts() (vl []string, err error) {
 	return
 }
 
+// GetExchanges get all exchanges
 func GetExchanges() (exchs []*ExchangeInfo, err error) {
 	vhosts, err := getVHosts()
 	if err != nil {

@@ -23,6 +23,7 @@ type System interface {
 	Stop() bool
 }
 
+// Stats represents a stats interface
 type Stats interface {
 	// Reset the RabbitMQ StatsDB, A node may be randomly selected
 	Reset() (bool, string, error)
@@ -53,6 +54,7 @@ type StatsController struct {
 	Stats
 }
 
+// Handle handle action
 func (c *StatsController) Handle(action *Action) *ActionStatus {
 	var (
 		st     = &ActionStatus{}
@@ -118,6 +120,7 @@ func (c *SysController) Handle(action *Action) *ActionStatus {
 	return st
 }
 
+// ExecCommand command execution
 func ExecCommand(name string, args []string) (string, error) {
 	var buf bytes.Buffer
 	log.Printf("[INFO] Exec %s %v", name, args)

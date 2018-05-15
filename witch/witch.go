@@ -41,6 +41,7 @@ func createStats() system.Stats {
 	return system.NewStatsDBCtl()
 }
 
+// Launch launch witch service
 func Launch() {
 	cfg := g.Config()
 	stats := createStats()
