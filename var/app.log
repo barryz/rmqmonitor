@@ -1,4 +1,0 @@
-2018/05/15 11:20:55 cfg.go:110: [INFO]: read config file: cfg.json successfully
-2018/05/15 11:20:55 launcher.go:37: Error reading pid file[/var/run/witch.pid]: open /var/run/witch.pid: no such file or directory
-2018/05/15 11:20:55 launcher.go:70: Starting [sleep 120]
-2018/05/15 11:20:55 launcher.go:30: Failed to write pid file: open /var/run/witch.pid: permission denied
