@@ -7,7 +7,7 @@ import (
 )
 
 func Test_SystemLauncher(t *testing.T) {
-	g.ParseConfig("../cfg.json.example")
+	g.ParseConfig("../config.example.yml")
 
 	//Launch()
 	//

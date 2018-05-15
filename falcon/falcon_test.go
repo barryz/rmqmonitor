@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetStatsDB(t *testing.T) {
-	g.ParseConfig("../cfg.json.example")
+	g.ParseConfig("../config.example.yml")
 
 	//ov, err := funcs.GetOverview()
 	//if err != nil {

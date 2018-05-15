@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetExchanges(t *testing.T) {
-	g.ParseConfig("../cfg.json.example")
+	g.ParseConfig("../config.example.yml")
 	//exchs, err := GetExchanges()
 	//if err != nil {
 	//	t.Error(err.Error())
