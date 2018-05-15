@@ -48,7 +48,7 @@ func (s *Launcher) readPid() (int, bool) {
 }
 
 func (s *Launcher) pidAlive(pid int) bool {
-	return (syscall.Kill(pid, 0) == nil)
+	return syscall.Kill(pid, 0) == nil
 }
 
 // IsAlive check if the process alive.

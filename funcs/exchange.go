@@ -75,7 +75,6 @@ func GetExchanges() (exchs []*ExchangeInfo, err error) {
 		res, err1 := g.RabbitAPI(service)
 		if err1 != nil {
 			err = err1
-			// 获取exchange无论发生什么错误 ，直接返回
 			return
 		}
 
@@ -86,20 +85,15 @@ func GetExchanges() (exchs []*ExchangeInfo, err error) {
 		}
 
 		for _, e := range es {
-			// 若exchange为默认， 则重命名为"DEFAULT_EXCHANGE"
 			if e.Name == "" {
 				e.Name = "DEFAULT_EXCHANGE"
 			}
 
-			// 不处理amq.开头的内置exchange
 			if strings.Contains(e.Name, "amq.") {
 				continue
 			}
 			exchs = append(exchs, e)
 		}
-
-		// add one slice to another
-		// exchs = append(exchs, es...)
 	}
 
 	return

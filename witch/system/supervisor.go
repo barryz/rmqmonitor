@@ -30,17 +30,17 @@ func (s *Supervisor) IsAlive() (int, bool) {
 // Start executes `supervisorctl start [service]`
 func (s *Supervisor) Start() (bool, error) {
 	_, err := ExecCommand(s.name, []string{"start", s.service})
-	return (err == nil), err
+	return err == nil, err
 }
 
 // Restart executes `supervisorctl restart [service]`
 func (s *Supervisor) Restart() (bool, error) {
 	_, err := ExecCommand(s.name, []string{"restart", s.service})
-	return (err == nil), err
+	return err == nil, err
 }
 
 // Stop executes `supervisorctl stop [service]`
 func (s *Supervisor) Stop() bool {
 	_, err := ExecCommand(s.name, []string{"stop", s.service})
-	return (err == nil)
+	return err == nil
 }

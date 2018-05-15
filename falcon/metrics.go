@@ -21,7 +21,7 @@ const (
 	exchangePrefix = "rabbitmq.exchange."
 )
 
-// MetaData ...
+// MetaData meta data
 type MetaData struct {
 	Endpoint    string      `json:"endpoint"`
 	Metric      string      `json:"metric"`
@@ -32,7 +32,7 @@ type MetaData struct {
 	Step        int64       `json:"step"`
 }
 
-// NewMetric ...
+// NewMetric create an new metric
 func NewMetric(name string, value interface{}, tags string) *MetaData {
 	host := g.GetHost()
 	return &MetaData{
@@ -52,7 +52,7 @@ func (m *MetaData) String() string {
 	return s
 }
 
-// SetValue ...
+// SetValue value setter
 func (m *MetaData) SetValue(v interface{}) {
 	m.Value = v
 }
@@ -64,7 +64,7 @@ func trimFloat(s float64) float64 {
 	return s
 }
 
-func calcpct(l, t int64) (pct float64) {
+func calcPercentage(l, t int64) (pct float64) {
 	if t == 0 {
 		return
 	}
@@ -73,9 +73,9 @@ func calcpct(l, t int64) (pct float64) {
 	return
 }
 
-func qstats(s string) int64 {
-	var alivequeue = g.Config().Qrunning
-	for _, i := range alivequeue {
+func qStats(s string) int64 {
+	var aliveQueue = g.Config().Qrunning
+	for _, i := range aliveQueue {
 		if strings.Contains(strings.ToLower(s), i) {
 			return 1
 		}
@@ -98,7 +98,6 @@ func partitions(s []string) int64 {
 		return 1
 	default:
 		return 0
-
 	}
 }
 
@@ -122,7 +121,7 @@ func GetCurrentStatsDB() *g.StatsDB {
 	return statsDB
 }
 
-// handleJudge  根据节点的角色判断push哪些指标
+// handleJudge
 func handleJudge() (data []*MetaData) {
 	data = make([]*MetaData, 0)
 	nd, err := funcs.GetNode()
@@ -131,7 +130,6 @@ func handleJudge() (data []*MetaData) {
 		return
 	}
 
-	// 设置节点指标， 集群中所有的节点都需要采集的指标
 	data = append(data, NewMetric(overviewPrefix+"ioReadawait", nd.Rawait, ""))    // io_read_avg_wait_time
 	data = append(data, NewMetric(overviewPrefix+"ioWriteawait", nd.Wawait, ""))   // io_write_avg_wait_time
 	data = append(data, NewMetric(overviewPrefix+"ioSyncawait", nd.Syncawait, "")) // io_sync_avg_wait_time
@@ -145,10 +143,10 @@ func handleJudge() (data []*MetaData) {
 	data = append(data, NewMetric(overviewPrefix+"memBinary", nd.Binary, ""))
 	data = append(data, NewMetric(overviewPrefix+"memAlarm", nd.MemAlarmStatus(), ""))
 	data = append(data, NewMetric(overviewPrefix+"diskAlarm", nd.DiskAlarmStatus(), ""))
-	data = append(data, NewMetric(overviewPrefix+"fdUsedPct", calcpct(nd.FdUsed, nd.FdTotal), ""))
-	data = append(data, NewMetric(overviewPrefix+"memUsedPct", calcpct(nd.MemUsed, nd.MemLimit), ""))
-	data = append(data, NewMetric(overviewPrefix+"socketUsedPct", calcpct(nd.SocketsUsed, nd.SocketsTotal), ""))
-	data = append(data, NewMetric(overviewPrefix+"erlProcsUsedPct", calcpct(nd.ErlProcUsed, nd.ErlProcTotal), "")) //消费生产比
+	data = append(data, NewMetric(overviewPrefix+"fdUsedPct", calcPercentage(nd.FdUsed, nd.FdTotal), ""))
+	data = append(data, NewMetric(overviewPrefix+"memUsedPct", calcPercentage(nd.MemUsed, nd.MemLimit), ""))
+	data = append(data, NewMetric(overviewPrefix+"socketUsedPct", calcPercentage(nd.SocketsUsed, nd.SocketsTotal), ""))
+	data = append(data, NewMetric(overviewPrefix+"erlProcsUsedPct", calcPercentage(nd.ErlProcUsed, nd.ErlProcTotal), "")) //消费生产比
 	data = append(data, NewMetric(overviewPrefix+"runQueue", nd.RunQueues, ""))
 	data = append(data, NewMetric(overviewPrefix+"isPartition", partitions(nd.Partitions), "")) // 是否发生网络分区
 
@@ -161,30 +159,26 @@ func handleJudge() (data []*MetaData) {
 
 	updateCurrentStatsDB(ov.StatisticsDbNode)
 
-	// 判断是否为统计节点，如果为统计节点，则push所有数据； 反之，则push节点数据
+	// RabbitMQ Version Compatibility: (<= 3.6.x)
 	if ov.StatisticsDbNode == currentNode || len(ov.StatisticsDbNode) == 0 {
-		// 获取channel耗时
 		channelCost, err := funcs.GetChannelCost()
 		if err != nil {
 			log.Println(err.Error())
 			return
 		}
 
-		// 获取aliveness接口数据
 		aliveness, err := funcs.GetAlive()
 		if err != nil {
 			log.Printf("get aliveness api failed due to %s", err.Error())
 			return
 		}
 
-		// 获取queue监控数据
 		queues, err := funcs.GetQueues()
 		if err != nil {
 			log.Printf("get queue api failed due to %s", err.Error())
 			return
 		}
 
-		// 获取exchange监控数据
 		exchs, err := funcs.GetExchanges()
 		if err != nil {
 			log.Printf("get exchange api failed due to %s", err.Error())
@@ -209,7 +203,7 @@ func handleJudge() (data []*MetaData) {
 		data = append(data, NewMetric(overviewPrefix+"redeliverRate", ov.RedeliverRates.Rate, ""))
 		data = append(data, NewMetric(overviewPrefix+"ackRate", ov.AckRates.Rate, ""))
 		data = append(data, NewMetric(overviewPrefix+"getChannelCost", channelCost, "")) // 获取channel耗时
-		data = append(data, NewMetric(overviewPrefix+"dpRatio", calcpct(int64(ov.DeliverGetRates.Rate), int64(ov.PublishRates.Rate)), ""))
+		data = append(data, NewMetric(overviewPrefix+"dpRatio", calcPercentage(int64(ov.DeliverGetRates.Rate), int64(ov.PublishRates.Rate)), ""))
 		data = append(data, NewMetric(overviewPrefix+"isAlive", isAliveness(aliveness.Status), "")) // 读写判断
 		data = append(data, NewMetric(overviewPrefix+"isUp", 1, ""))
 
@@ -225,8 +219,8 @@ func handleJudge() (data []*MetaData) {
 			data = append(data, NewMetric(queuePrefix+"memory", q.Memory, tags))
 			data = append(data, NewMetric(queuePrefix+"consumers", q.Consumers, tags))
 			data = append(data, NewMetric(queuePrefix+"consumer_utilisation", consumerUtil(q.ConsumerUtil), tags))
-			data = append(data, NewMetric(queuePrefix+"status", qstats(q.Status), tags))
-			data = append(data, NewMetric(queuePrefix+"dpratio", calcpct(int64(q.DeliverGet.Rate), int64(q.Publish.Rate)), tags))
+			data = append(data, NewMetric(queuePrefix+"status", qStats(q.Status), tags))
+			data = append(data, NewMetric(queuePrefix+"dpratio", calcPercentage(int64(q.DeliverGet.Rate), int64(q.Publish.Rate)), tags))
 		}
 
 		for _, e := range exchs {
@@ -246,7 +240,7 @@ func handleSickRabbit() (data []*MetaData) {
 	return
 }
 
-// Collector ...
+// Collector collect metrics
 func Collector() {
 	var m []*MetaData
 
