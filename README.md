@@ -1,6 +1,7 @@
 # rmqmonitor
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/barryz/rmqmonitor)](https://goreportcard.com/report/github.com/barryz/rmqmonitor)
+![GoCI](http://goci.ele.me/na/goci/eleme/goci/badge?type=job)
 [![Build Status](https://travis-ci.org/barryz/rmqmonitor.svg?branch=master)](https://travis-ci.org/barryz/rmqmonitor)
 [![Apache 2 licensed](https://img.shields.io/badge/license-Apache2-blue.svg)](https://raw.githubusercontent.com/oklog/run/master/LICENSE)
 
