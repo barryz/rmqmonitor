@@ -1,0 +1,56 @@
+# debug mode
+debug: false
+# getting metric details
+details: true
+# hostname specified
+hostname: ""
+# agent collect interval
+interval: 10
+# push batch-size metrics per-operation
+batchsize: 100
+# enable functions
+enabled:
+  collect: true
+  witch: true
+  log_rotate: true
+
+# http client settings (timeout in seconds)
+http:
+  conn_timeout: 10
+  response_timeout: 10
+
+# RabbitMQ settings
+rabbitmq:
+  host: 127.0.0.1
+  port: 15672
+  user: admin
+  password: admin
+
+# falcon settings
+falcon:
+  api: "http://127.0.0.1:1988/v1/push"
+
+# scheduler config
+scheduler:
+  log_rotate: "0 11 18 ? * 0-6"
+
+# witch config
+witch:
+  listen: ":5671"
+  control: "buildin"
+  service: ""
+  command: "sleep 120"
+  process: "beam"
+  pid_file: "var/run/witch.pid"
+  auth:
+    admin: "ADMIN"
+
+# filter for queues
+ignore_queue:
+  - "test"
+  - "celery"
+
+# status which indicate queue's running state
+qrunning:
+  - "idle"
+  - "running"
